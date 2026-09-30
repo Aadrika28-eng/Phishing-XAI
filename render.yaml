@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: phishing-xai
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn webapp.app:app

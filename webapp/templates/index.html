@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Phishing-XAI | AI URL Detector</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+
+            font-family: Arial, Helvetica, sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #07111f,
+                    #101827,
+                    #07111f
+                );
+
+            color: #f8fafc;
+
+            min-height: 100vh;
+
+        }
+
+
+        /* HEADER */
+
+        header {
+
+            padding: 35px 7%;
+
+            border-bottom: 1px solid #263244;
+
+            background: rgba(7, 17, 31, 0.8);
+
+        }
+
+
+        .logo {
+
+            font-size: 30px;
+
+            font-weight: 800;
+
+        }
+
+
+        .logo span {
+
+            color: #38e8a5;
+
+        }
+
+
+        .tagline {
+
+            margin-top: 8px;
+
+            color: #94a3b8;
+
+            font-size: 14px;
+
+        }
+
+
+        /* MAIN */
+
+        .container {
+
+            width: 90%;
+
+            max-width: 1100px;
+
+            margin: 50px auto;
+
+        }
+
+
+        .hero {
+
+            text-align: center;
+
+            margin-bottom: 35px;
+
+        }
+
+
+        .hero h1 {
+
+            font-size: 44px;
+
+            line-height: 1.15;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        .hero h1 span {
+
+            color: #38e8a5;
+
+        }
+
+
+        .hero p {
+
+            color: #94a3b8;
+
+            max-width: 700px;
+
+            margin: auto;
+
+            line-height: 1.6;
+
+        }
+
+
+        /* SCANNER */
+
+        .scanner {
+
+            background: #111c2d;
+
+            border: 1px solid #26364d;
+
+            border-radius: 18px;
+
+            padding: 35px;
+
+            box-shadow:
+                0 20px 60px rgba(0,0,0,0.35);
+
+        }
+
+
+        .input-label {
+
+            display: block;
+
+            margin-bottom: 10px;
+
+            font-weight: bold;
+
+            color: #dbeafe;
+
+        }
+
+
+        .input-row {
+
+            display: flex;
+
+            gap: 12px;
+
+        }
+
+
+        #urlInput {
+
+            flex: 1;
+
+            padding: 17px 18px;
+
+            border-radius: 10px;
+
+            border: 1px solid #3b4c64;
+
+            background: #08111f;
+
+            color: white;
+
+            font-size: 16px;
+
+            outline: none;
+
+        }
+
+
+        #urlInput:focus {
+
+            border-color: #38e8a5;
+
+        }
+
+
+        #analyzeBtn {
+
+            padding: 0 30px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #38e8a5;
+
+            color: #06130d;
+
+            font-size: 15px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+        }
+
+
+        #analyzeBtn:hover {
+
+            transform: translateY(-1px);
+
+            opacity: 0.9;
+
+        }
+
+
+        #analyzeBtn:disabled {
+
+            opacity: 0.5;
+
+            cursor: not-allowed;
+
+        }
+
+
+        .loading {
+
+            display: none;
+
+            text-align: center;
+
+            margin-top: 20px;
+
+            color: #38e8a5;
+
+        }
+
+
+        /* RESULT */
+
+        #resultSection {
+
+            display: none;
+
+            margin-top: 25px;
+
+        }
+
+
+        .result-card {
+
+            background: #111c2d;
+
+            border: 1px solid #26364d;
+
+            border-radius: 18px;
+
+            padding: 35px;
+
+        }
+
+
+        .result-top {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 20px;
+
+        }
+
+
+        .result-label {
+
+            color: #64748b;
+
+            font-size: 12px;
+
+            letter-spacing: 2px;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        #prediction {
+
+            font-size: 34px;
+
+            font-weight: 800;
+
+        }
+
+
+        .legitimate {
+
+            color: #38e8a5;
+
+        }
+
+
+        .phishing {
+
+            color: #fb7185;
+
+        }
+
+
+        .confidence-box {
+
+            text-align: right;
+
+        }
+
+
+        .confidence-box small {
+
+            display: block;
+
+            color: #94a3b8;
+
+            margin-bottom: 5px;
+
+        }
+
+
+        #confidence {
+
+            font-size: 30px;
+
+            font-weight: bold;
+
+        }
+
+
+        /* PROBABILITY */
+
+        .probabilities {
+
+            margin-top: 35px;
+
+        }
+
+
+        .probability-row {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-bottom: 7px;
+
+            color: #cbd5e1;
+
+        }
+
+
+        .bar {
+
+            height: 10px;
+
+            background: #263244;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .bar-fill {
+
+            height: 100%;
+
+            width: 0%;
+
+            transition: width 0.8s ease;
+
+        }
+
+
+        #legitimateBar {
+
+            background: #38e8a5;
+
+        }
+
+
+        #phishingBar {
+
+            background: #fb7185;
+
+        }
+
+
+        /* EXPLANATION */
+
+        .explanation {
+
+            margin-top: 35px;
+
+            padding-top: 30px;
+
+            border-top: 1px solid #263244;
+
+        }
+
+
+        .explanation h2 {
+
+            font-size: 22px;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .explanation p {
+
+            color: #94a3b8;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .feature {
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .feature-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-bottom: 7px;
+
+        }
+
+
+        .feature-name {
+
+            color: #e2e8f0;
+
+            font-weight: 600;
+
+        }
+
+
+        .feature-value {
+
+            color: #94a3b8;
+
+            font-size: 13px;
+
+        }
+
+
+        .feature-bar {
+
+            height: 8px;
+
+            background: #263244;
+
+            border-radius: 10px;
+
+            overflow: hidden;
+
+        }
+
+
+        .feature-fill {
+
+            height: 100%;
+
+            transition: width 0.7s ease;
+
+        }
+
+
+        .impact-positive {
+
+            background: #fb7185;
+
+        }
+
+
+        .impact-negative {
+
+            background: #38e8a5;
+
+        }
+
+
+        /* ERROR */
+
+        #errorBox {
+
+            display: none;
+
+            margin-top: 20px;
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+            background: #3b1620;
+
+            border: 1px solid #7f1d1d;
+
+            color: #fecaca;
+
+        }
+
+
+        /* FOOTER */
+
+        footer {
+
+            text-align: center;
+
+            padding: 40px;
+
+            color: #64748b;
+
+            font-size: 13px;
+
+        }
+
+
+        /* MOBILE */
+
+        @media(max-width: 700px) {
+
+            .hero h1 {
+
+                font-size: 34px;
+
+            }
+
+            .input-row {
+
+                flex-direction: column;
+
+            }
+
+            #analyzeBtn {
+
+                padding: 16px;
+
+            }
+
+            .result-top {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+            }
+
+            .confidence-box {
+
+                text-align: left;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+
+        🛡️ Phishing<span>-XAI</span>
+
+    </div>
+
+    <div class="tagline">
+
+        Explainable AI-Based Phishing Website Detection
+
+    </div>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <div class="hero">
+
+        <h1>
+
+            Detect Phishing.<br>
+
+            <span>Understand Why.</span>
+
+        </h1>
+
+        <p>
+
+            Enter a website URL and our machine learning model
+
+            analyzes its structural and security characteristics
+
+            to determine whether it is legitimate or potentially
+
+            malicious.
+
+        </p>
+
+    </div>
+
+
+
+    <!-- URL SCANNER -->
+
+    <div class="scanner">
+
+        <label class="input-label">
+
+            Website URL
+
+        </label>
+
+
+        <div class="input-row">
+
+            <input
+
+                id="urlInput"
+
+                type="text"
+
+                placeholder="example.com/login"
+
+                autocomplete="off"
+
+            >
+
+
+            <button
+
+                id="analyzeBtn"
+
+                onclick="analyzeURL()">
+
+                🔍 ANALYZE URL
+
+            </button>
+
+        </div>
+
+
+        <div
+
+            id="loading"
+
+            class="loading">
+
+            🧠 Analyzing URL with XGBoost + SHAP...
+
+        </div>
+
+
+        <div
+
+            id="errorBox">
+
+        </div>
+
+    </div>
+
+
+
+    <!-- RESULT -->
+
+    <section id="resultSection">
+
+
+        <div class="result-card">
+
+
+            <div class="result-top">
+
+
+                <div>
+
+                    <div class="result-label">
+
+                        ANALYSIS RESULT
+
+                    </div>
+
+
+                    <div id="prediction">
+
+                        —
+
+                    </div>
+
+                </div>
+
+
+                <div class="confidence-box">
+
+                    <small>
+
+                        MODEL CONFIDENCE
+
+                    </small>
+
+                    <div id="confidence">
+
+                        —
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- PROBABILITIES -->
+
+            <div class="probabilities">
+
+
+                <div class="probability-row">
+
+                    <span>
+
+                        🟢 Legitimate
+
+                    </span>
+
+                    <strong id="legitimateProbability">
+
+                        0%
+
+                    </strong>
+
+                </div>
+
+
+                <div class="bar">
+
+                    <div
+
+                        id="legitimateBar"
+
+                        class="bar-fill">
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="probability-row">
+
+                    <span>
+
+                        🔴 Phishing
+
+                    </span>
+
+                    <strong id="phishingProbability">
+
+                        0%
+
+                    </strong>
+
+                </div>
+
+
+                <div class="bar">
+
+                    <div
+
+                        id="phishingBar"
+
+                        class="bar-fill">
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- XAI -->
+
+            <div class="explanation">
+
+
+                <h2>
+
+                    🧠 Why did the AI make this decision?
+
+                </h2>
+
+
+                <p>
+
+                    SHAP (SHapley Additive exPlanations)
+
+                    shows how individual URL characteristics
+
+                    influenced the model's prediction.
+
+                </p>
+
+
+                <div id="features">
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+</div>
+
+
+
+<footer>
+
+    Phishing-XAI · XGBoost · Explainable AI · SHAP
+
+</footer>
+
+
+
+<script>
+
+
+async function analyzeURL() {
+
+
+    const input =
+
+        document.getElementById("urlInput");
+
+
+    const button =
+
+        document.getElementById("analyzeBtn");
+
+
+    const loading =
+
+        document.getElementById("loading");
+
+
+    const resultSection =
+
+        document.getElementById("resultSection");
+
+
+    const errorBox =
+
+        document.getElementById("errorBox");
+
+
+    const url =
+
+        input.value.trim();
+
+
+
+    /* VALIDATION */
+
+    if (!url) {
+
+        showError("Please enter a URL first.");
+
+        return;
+
+    }
+
+
+
+    /* UI STATE */
+
+    button.disabled = true;
+
+    button.innerText = "ANALYZING...";
+
+    loading.style.display = "block";
+
+    resultSection.style.display = "none";
+
+    errorBox.style.display = "none";
+
+
+
+    try {
+
+
+        /* SEND REQUEST TO FLASK */
+
+        const response = await fetch(
+
+            "/analyze",
+
+            {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type":
+
+                        "application/json"
+
+                },
+
+                body: JSON.stringify({
+
+                    url: url
+
+                })
+
+            }
+
+        );
+
+
+
+        const data =
+
+            await response.json();
+
+
+
+        if (!data.success) {
+
+            throw new Error(
+
+                data.error ||
+
+                "Unable to analyze URL."
+
+            );
+
+        }
+
+
+
+        /* PREDICTION */
+
+        const prediction =
+
+            document.getElementById(
+
+                "prediction"
+
+            );
+
+
+        prediction.innerText =
+
+            data.prediction === "PHISHING"
+
+                ? "🚨 PHISHING DETECTED"
+
+                : "✅ LEGITIMATE WEBSITE";
+
+
+        prediction.className =
+
+            data.prediction === "PHISHING"
+
+                ? "phishing"
+
+                : "legitimate";
+
+
+
+        /* CONFIDENCE */
+
+        document.getElementById(
+
+            "confidence"
+
+        ).innerText =
+
+            data.confidence + "%";
+
+
+
+        /* PROBABILITIES */
+
+        document.getElementById(
+
+            "legitimateProbability"
+
+        ).innerText =
+
+            data.legitimate_probability +
+
+            "%";
+
+
+        document.getElementById(
+
+            "phishingProbability"
+
+        ).innerText =
+
+            data.phishing_probability +
+
+            "%";
+
+
+
+        document.getElementById(
+
+            "legitimateBar"
+
+        ).style.width =
+
+            data.legitimate_probability +
+
+            "%";
+
+
+        document.getElementById(
+
+            "phishingBar"
+
+        ).style.width =
+
+            data.phishing_probability +
+
+            "%";
+
+
+
+        /* SHAP FEATURES */
+
+        const container =
+
+            document.getElementById(
+
+                "features"
+
+            );
+
+
+        container.innerHTML = "";
+
+
+
+        if (
+
+            data.features &&
+
+            data.features.length > 0
+
+        ) {
+
+
+            const maxImpact =
+
+                Math.max(
+
+                    ...data.features.map(
+
+                        f => f.absolute_impact
+
+                    )
+
+                );
+
+
+
+            data.features.forEach(
+
+                feature => {
+
+
+                    const percentage =
+
+                        maxImpact === 0
+
+                            ? 0
+
+                            :
+
+                            (
+
+                                feature.absolute_impact /
+
+                                maxImpact
+
+                            ) * 100;
+
+
+
+                    const impactClass =
+
+                        feature.impact >= 0
+
+                            ? "impact-positive"
+
+                            : "impact-negative";
+
+
+
+                    const sign =
+
+                        feature.impact >= 0
+
+                            ? "+"
+
+                            : "";
+
+
+
+                    const div =
+
+                        document.createElement(
+
+                            "div"
+
+                        );
+
+
+                    div.className = "feature";
+
+
+                    div.innerHTML = `
+
+                        <div class="feature-header">
+
+                            <span class="feature-name">
+
+                                ${feature.feature}
+
+                            </span>
+
+                            <span class="feature-value">
+
+                                Value: ${Number(feature.value).toFixed(4)}
+
+                                &nbsp; | &nbsp;
+
+                                Impact: ${sign}${Number(feature.impact).toFixed(4)}
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="feature-bar">
+
+                            <div
+
+                                class="feature-fill ${impactClass}"
+
+                                style="width:${percentage}%">
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+
+                    container.appendChild(div);
+
+                }
+
+            );
+
+        }
+
+
+
+        /* SHOW RESULT */
+
+        resultSection.style.display = "block";
+
+
+        resultSection.scrollIntoView({
+
+            behavior: "smooth"
+
+        });
+
+
+    }
+
+
+    catch (error) {
+
+
+        console.error(error);
+
+
+        showError(
+
+            error.message ||
+
+            "Something went wrong."
+
+        );
+
+    }
+
+
+    finally {
+
+
+        button.disabled = false;
+
+        button.innerText = "🔍 ANALYZE URL";
+
+        loading.style.display = "none";
+
+    }
+
+}
+
+
+
+function showError(message) {
+
+
+    const errorBox =
+
+        document.getElementById(
+
+            "errorBox"
+
+        );
+
+
+    errorBox.innerText =
+
+        "⚠️ " + message;
+
+
+    errorBox.style.display =
+
+        "block";
+
+}
+
+
+
+document
+
+    .getElementById("urlInput")
+
+    .addEventListener(
+
+        "keypress",
+
+        function(event) {
+
+
+            if (event.key === "Enter") {
+
+                analyzeURL();
+
+            }
+
+        }
+
+    );
+
+
+</script>
+
+
+</body>
+
+</html>
