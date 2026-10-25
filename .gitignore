@@ -8,4 +8,4 @@ __pycache__/
 data/
 results/
 *.csv
-*.ipynb
+*.ipynbmodels/random_forest_model.pkl
