@@ -1,3 +1,4 @@
+```groovy
 pipeline {
     agent any
 
@@ -16,9 +17,10 @@ pipeline {
         stage('Build and Test') {
             steps {
                 sh '''
-                    python3 -m pip install --upgrade pip
-                    pip3 install -r requirements.txt
-                    python3 -m pytest -q
+                    python3 -m venv venv
+                    venv/bin/pip install --upgrade pip
+                    venv/bin/pip install -r requirements.txt
+                    venv/bin/python -m pytest -q
                 '''
             }
         }
@@ -76,8 +78,10 @@ pipeline {
         success {
             echo 'Phishing-XAI CI/CD pipeline completed successfully!'
         }
+
         failure {
             echo 'Pipeline failed. Check the Jenkins console output.'
         }
     }
 }
+```
